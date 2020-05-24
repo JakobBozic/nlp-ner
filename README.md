@@ -1,7 +1,7 @@
 ### Environment setup
 The easiest way to run the code is to create a conda environment, all the requirements are listed in requirements.yaml
 
-In order to train a model or evaluate a dataset (in not too long time) you will also need CUDA toolkit 10.1.
+In order to train a model or evaluate a dataset (in not too long time) you will also need CUDA toolkit 10.1 (https://medium.com/@exesse/cuda-10-1-installation-on-ubuntu-18-04-lts-d04f89287130).
 
 ### Reproducing results from report
 All the code that was used to train and evaluate models is in src directory.
