@@ -112,7 +112,7 @@ def load_model_and_vocab(fname):
     vocab = Vocabulary.from_files(VOCAB_PATH)
     params = parse_params(PARAMS_PATH)
     if "dataset" not in params:
-        params["dataset"] = "ssj500k"
+        params["dataset"] = "ssj"
     model = get_model(vocab, params)
 
     if torch.cuda.is_available():

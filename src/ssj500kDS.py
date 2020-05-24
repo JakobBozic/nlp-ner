@@ -8,11 +8,10 @@ from allennlp.data import Instance
 import pickle
 import random
 
-PICKLE_DUMP_FULL = "/home/jakob/PycharmProjects/nlp-ner2/data/full_ds.pkl"
 
-PICKLE_DUMP_TRAIN = "/home/jakob/PycharmProjects/nlp-ner2/data/train_ds.pkl"
-PICKLE_DUMP_TEST = "/home/jakob/PycharmProjects/nlp-ner2/data/test_ds.pkl"
-PICKLE_DUMP_NO_MISC = "/home/jakob/PycharmProjects/nlp-ner2/data/ssj500k_no_misc_full.pkl"
+PICKLE_DUMP_TRAIN = "/home/jakob/PycharmProjects/nlp-ner2/data/ssj_train_ds.pkl"
+PICKLE_DUMP_TEST = "/home/jakob/PycharmProjects/nlp-ner2/data/ssj_test_ds.pkl"
+PICKLE_DUMP_NO_MISC = "/home/jakob/PycharmProjects/nlp-ner2/data/ssj_no_misc_full.pkl"
 
 TRAIN_RATIO = 0.8
 
@@ -54,36 +53,6 @@ class SSJ500KReader(DatasetReader):
                     label_field = SequenceLabelField(labels=tags, sequence_field=sentence_field)
                     fields["labels"] = label_field
                     yield Instance(fields)
-
-
-def load_convert_save():
-    tei_doc = "/home/jakob/PycharmProjects/nlp-ner2/data/ssj500k-sl.TEI/ssj500k-sl.body.xml"
-    with open(tei_doc, 'r') as tei:
-        soup = BeautifulSoup(tei, 'lxml')
-
-    all_sentences = soup.findAll("s")
-    del soup
-
-    data = []
-    for s in all_sentences:
-        sentence = []
-        labels = []
-        lemmas = []
-        words = s.findAll("w")
-        ned = {}
-        nel = s.findAll("seg")
-        for ne in nel:
-            for w in ne.findAll("w"):
-                ned[w.text] = ne.get("subtype")
-        for w in words:
-            word = w.text
-            lab = ned[word] if word in ned else "other"
-            sentence.append(word)
-            labels.append(lab)
-            lemmas.append(w.get("lemma"))
-        data.append((sentence, lemmas, labels))
-    with open(PICKLE_DUMP_FULL, "wb+") as f:
-        pickle.dump(data, f)
 
 
 def load_convert_save_oversample():
@@ -196,4 +165,6 @@ def load_convert_save_no_misc():
 
 if __name__ == '__main__':
     random.seed(1337)
+
+    load_convert_save_oversample()
     load_convert_save_no_misc()

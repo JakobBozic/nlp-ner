@@ -190,4 +190,5 @@ def load_convert_save_full():
 
 if __name__ == '__main__':
     random.seed(1337)
+    load_convert_save_oversample()
     load_convert_save_full()
