@@ -1,4 +1,4 @@
-from typing import Iterator, List, Dict
+from typing import Dict
 import torch
 from allennlp.data.vocabulary import Vocabulary
 from allennlp.models import Model
@@ -7,14 +7,14 @@ from allennlp.modules.token_embedders import Embedding
 from allennlp.modules.seq2seq_encoders import Seq2SeqEncoder, PytorchSeq2SeqWrapper
 from allennlp.nn.util import get_text_field_mask, sequence_cross_entropy_with_logits
 from allennlp.training.metrics import CategoricalAccuracy, F1Measure
-from allennlp.data.iterators import BucketIterator
-from allennlp.training.trainer import Trainer
-from allennlp.predictors import SentenceTaggerPredictor
 from allennlp.modules.token_embedders import ElmoTokenEmbedder
 from datetime import datetime
-from allennlp.data.token_indexers.elmo_indexer import ELMoTokenCharactersIndexer
 import os
 
+
+MODELS_DIRECTORY = "/home/jakob/PycharmProjects/nlp-ner2/models"
+ELMO_OPTIONS_FILE = "/home/jakob/PycharmProjects/nlp-ner2/models/slovenian-elmo/options.json"
+ELMO_WEIGHTS_FILE = "/home/jakob/PycharmProjects/nlp-ner2/models/slovenian-elmo/slovenian-elmo-weights.hdf5"
 
 class NerModel(Model):
     def __init__(self,
@@ -61,9 +61,6 @@ class NerModel(Model):
 
 
 def get_model(vocab, params):
-    options_file = "/home/jakob/PycharmProjects/nlp-ner/models/slovenian-elmo/options.json"
-    weights_file = "/home/jakob/PycharmProjects/nlp-ner/models/slovenian-elmo/slovenian-elmo-weights.hdf5"
-
     emb_d = params["embedding_dim"]
     hidden_d = params["hidden_dim"]
 
@@ -74,7 +71,7 @@ def get_model(vocab, params):
     bidirectional = params['bidirectional']
 
     if use_elmo_embeddings:
-        token_embedder = ElmoTokenEmbedder(options_file, weights_file)
+        token_embedder = ElmoTokenEmbedder(ELMO_OPTIONS_FILE, ELMO_WEIGHTS_FILE)
     else:
         token_embedder = Embedding(num_embeddings=vocab.get_vocab_size('tokens'), embedding_dim=emb_d)
 
@@ -93,21 +90,21 @@ def get_model(vocab, params):
 def save_model_and_vocab(model, vocab, metrics, params=None, fname=None):
     if fname is None:
         fname = datetime.now().strftime("%m_%d_%H_%M")
-    os.makedirs(os.path.join("/home/jakob/PycharmProjects/nlp-ner/models", fname), exist_ok=True)
+    os.makedirs(os.path.join(MODELS_DIRECTORY, fname), exist_ok=True)
 
-    with open(os.path.join("/home/jakob/PycharmProjects/nlp-ner/models", fname, "model.stdct"), 'wb') as f:
+    with open(os.path.join(MODELS_DIRECTORY, fname, "model.stdct"), 'wb') as f:
         torch.save(model.state_dict(), f)
-    vocab.save_to_files(os.path.join("/home/jakob/PycharmProjects/nlp-ner/models", fname, "vocab"))
-    with open(os.path.join("/home/jakob/PycharmProjects/nlp-ner/models", fname, "parameters.txt"), 'w+') as f:
+    vocab.save_to_files(os.path.join(MODELS_DIRECTORY, fname, "vocab"))
+    with open(os.path.join(MODELS_DIRECTORY, fname, "parameters.txt"), 'w+') as f:
         lines = sorted(map(lambda x: f"{x[0]}:{x[1]}\n", params.items()))
         f.writelines(lines)
-    with open(os.path.join("/home/jakob/PycharmProjects/nlp-ner/models", fname, "metrics.txt"), 'w+') as f:
+    with open(os.path.join(MODELS_DIRECTORY, fname, "metrics.txt"), 'w+') as f:
         lines = list(map(lambda x: f"{x[0]}:{x[1]}\n", metrics.items()))
         f.writelines(lines)
 
 
 def load_model_and_vocab(fname):
-    FOLDER_PATH = os.path.join("/home/jakob/PycharmProjects/nlp-ner/models", fname)
+    FOLDER_PATH = os.path.join(MODELS_DIRECTORY, fname)
     MODEL_PATH = os.path.join(FOLDER_PATH, "model.stdct")
     VOCAB_PATH = os.path.join(FOLDER_PATH, "vocab")
     PARAMS_PATH = os.path.join(FOLDER_PATH, "parameters.txt")

@@ -11,10 +11,13 @@ from allennlp.training.util import evaluate
 
 torch.manual_seed(1)
 
+EVAL_SSJ500K_MODEL_ON_SENTICOREF = False
 
+# %%
 if __name__ == '__main__':
-    model_dir = "elmo_bi_gru"
-    # model_dir = "senti_elmo_bi_gru"
+
+    model_dir = "elmo_bi_gru" if EVAL_SSJ500K_MODEL_ON_SENTICOREF else "senti_elmo_uni_gru"
+
     model, params, vocab = load_model_and_vocab(model_dir)
     token_indexer = {"tokens": ELMoTokenCharactersIndexer()} if params['use_elmo'] else None
     if torch.cuda.is_available():
@@ -25,8 +28,9 @@ if __name__ == '__main__':
     iterator = BucketIterator(batch_size=params['batch_size'], sorting_keys=[("sentence", "num_tokens")])
     iterator.index_with(vocab)
 
-    reader = SentiCorefReader(token_indexer)
-    # reader = SSJ500KReader(token_indexer)
-    dataset = reader.read("full")
+    reader = SentiCorefReader(token_indexer) if EVAL_SSJ500K_MODEL_ON_SENTICOREF else SSJ500KReader(token_indexer)
+    dataset = reader.read("full") if EVAL_SSJ500K_MODEL_ON_SENTICOREF else reader.read("no_misc")
 
     metrics = evaluate(model, dataset, iterator, cuda_device, None)
+    for k, v in metrics.items():
+        print(f"{k}:{v}")

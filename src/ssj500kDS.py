@@ -8,11 +8,11 @@ from allennlp.data import Instance
 import pickle
 import random
 
-PICKLE_DUMP_FULL = "/home/jakob/PycharmProjects/nlp-ner/data/full_ds.pkl"
+PICKLE_DUMP_FULL = "/home/jakob/PycharmProjects/nlp-ner2/data/full_ds.pkl"
 
-PICKLE_DUMP_TRAIN = "/home/jakob/PycharmProjects/nlp-ner/data/train_ds.pkl"
-PICKLE_DUMP_TEST = "/home/jakob/PycharmProjects/nlp-ner/data/test_ds.pkl"
-PICKLE_DUMP_NO_MISC = "/home/jakob/PycharmProjects/nlp-ner/data/ssj500k_no_misc_full.pkl"
+PICKLE_DUMP_TRAIN = "/home/jakob/PycharmProjects/nlp-ner2/data/train_ds.pkl"
+PICKLE_DUMP_TEST = "/home/jakob/PycharmProjects/nlp-ner2/data/test_ds.pkl"
+PICKLE_DUMP_NO_MISC = "/home/jakob/PycharmProjects/nlp-ner2/data/ssj500k_no_misc_full.pkl"
 
 TRAIN_RATIO = 0.8
 
@@ -57,7 +57,7 @@ class SSJ500KReader(DatasetReader):
 
 
 def load_convert_save():
-    tei_doc = "/home/jakob/PycharmProjects/nlp-ner/data/ssj500k-sl.TEI/ssj500k-sl.body.xml"
+    tei_doc = "/home/jakob/PycharmProjects/nlp-ner2/data/ssj500k-sl.TEI/ssj500k-sl.body.xml"
     with open(tei_doc, 'r') as tei:
         soup = BeautifulSoup(tei, 'lxml')
 
@@ -87,7 +87,7 @@ def load_convert_save():
 
 
 def load_convert_save_oversample():
-    tei_doc = "/home/jakob/PycharmProjects/nlp-ner/data/ssj500k-sl.TEI/ssj500k-sl.body.xml"
+    tei_doc = "/home/jakob/PycharmProjects/nlp-ner2/data/ssj500k-sl.TEI/ssj500k-sl.body.xml"
     with open(tei_doc, 'r') as tei:
         soup = BeautifulSoup(tei, 'lxml')
 
@@ -154,7 +154,7 @@ def load_convert_save_oversample():
 
 
 def load_convert_save_no_misc():
-    tei_doc = "/home/jakob/PycharmProjects/nlp-ner/data/ssj500k-sl.TEI/ssj500k-sl.body.xml"
+    tei_doc = "/home/jakob/PycharmProjects/nlp-ner2/data/ssj500k-sl.TEI/ssj500k-sl.body.xml"
     with open(tei_doc, 'r') as tei:
         soup = BeautifulSoup(tei, 'lxml')
 

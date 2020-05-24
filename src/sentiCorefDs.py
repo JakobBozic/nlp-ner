@@ -9,12 +9,12 @@ import pickle
 import random
 import os
 
-DATA_DIR = "/home/jakob/PycharmProjects/nlp-ner/data/senticoref"
+DATA_DIR = "/home/jakob/PycharmProjects/nlp-ner2/data/senticoref"
 
-PICKLE_DUMP_FULL = "/home/jakob/PycharmProjects/nlp-ner/data/senti_full_ds.pkl"
+PICKLE_DUMP_FULL = "/home/jakob/PycharmProjects/nlp-ner2/data/senti_full_ds.pkl"
 
-PICKLE_DUMP_TRAIN = "/home/jakob/PycharmProjects/nlp-ner/data/senti_train_ds.pkl"
-PICKLE_DUMP_TEST = "/home/jakob/PycharmProjects/nlp-ner/data/senti_test_ds.pkl"
+PICKLE_DUMP_TRAIN = "/home/jakob/PycharmProjects/nlp-ner2/data/senti_train_ds.pkl"
+PICKLE_DUMP_TEST = "/home/jakob/PycharmProjects/nlp-ner2/data/senti_test_ds.pkl"
 
 TRAIN_RATIO = 0.8
 

@@ -1,7 +1,7 @@
 from allennlp.modules.elmo import Elmo, batch_to_ids
 
-options_file = "/home/jakob/PycharmProjects/nlp-ner/models/slovenian-elmo/options.json"
-weights_file = "/home/jakob/PycharmProjects/nlp-ner/models/slovenian-elmo/slovenian-elmo-weights.hdf5"
+options_file = "/home/jakob/PycharmProjects/nlp-ner2/models/slovenian-elmo/options.json"
+weights_file = "/home/jakob/PycharmProjects/nlp-ner2/models/slovenian-elmo/slovenian-elmo-weights.hdf5"
 
 elmo = Elmo(options_file, weights_file, 3, dropout=0)
 

@@ -4,14 +4,14 @@ from tei_reader import TeiReader
 import vert
 from bs4 import BeautifulSoup
 
-tei_doc = "/home/jakob/PycharmProjects/nlp-ner/data/ssj500k-sl.TEI/ssj500k-sl.body.xml"
+tei_doc = "/home/jakob/PycharmProjects/nlp-ner2/data/ssj500k-sl.TEI/ssj500k-sl.body.xml"
 with open(tei_doc, 'r') as tei:
     soup = BeautifulSoup(tei, 'lxml')
 
-# with open("/home/jakob/PycharmProjects/nlp-ner/data/ssj500k/sl_ssj-ud_v2.4.conllu") as f:
+# with open("/home/jakob/PycharmProjects/nlp-ner2/data/ssj500k/sl_ssj-ud_v2.4.conllu") as f:
 #     data = conllu.parse(f.read())
 #
-# corpora = TeiReader().read_file("/home/jakob/PycharmProjects/nlp-ner/data/ssj500k-sl.TEI/ssj500k-sl.body.xml")
+# corpora = TeiReader().read_file("/home/jakob/PycharmProjects/nlp-ner2/data/ssj500k-sl.TEI/ssj500k-sl.body.xml")
 # print(corpora.text)
 # %%
 # first_p = soup.findChild("p")

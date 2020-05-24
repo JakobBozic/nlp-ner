@@ -23,7 +23,7 @@ def run_text_input(model_dir, sentence):
 
 
 if __name__ == '__main__':
-    sentence = "Obžalujem da se je komunikacija med Naso in Roskozmosov zadnja leta izrazito poslabšala Namesto da bi razpravljali o ducatih projektov ki so nam v skupnem interesu ostajamo samo na izstrelitvah astronavtov na Mednarodno vesoljsko postajo ali pa dobavljanju ruskih motorjev RD-180/81 v ZDA Visokoleteči projekti povezani s kolonizacijo Meseca bi lahko bili močna skupna točka obeh držav v težavnih časih"
-    model_dir = "senti_elmo_bi_gru"
+    sentence = "Po različnih delih Slovenije zaznavamo od 10 do 30 odstotkov manj rakavih diagnoz Kako bo to vplivalo na dolgi rok ta trenutek še ne vemo je za Televizijo Slovenija povedala Vesna Zadnik vodja epidemiologije in registra raka na Onkološkem inštitutu"
+    model_dir = "elmo_bi_gru"
 
     run_text_input(model_dir, sentence)
