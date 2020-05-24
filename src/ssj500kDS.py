@@ -12,6 +12,7 @@ PICKLE_DUMP_FULL = "/home/jakob/PycharmProjects/nlp-ner/data/full_ds.pkl"
 
 PICKLE_DUMP_TRAIN = "/home/jakob/PycharmProjects/nlp-ner/data/train_ds.pkl"
 PICKLE_DUMP_TEST = "/home/jakob/PycharmProjects/nlp-ner/data/test_ds.pkl"
+PICKLE_DUMP_NO_MISC = "/home/jakob/PycharmProjects/nlp-ner/data/ssj500k_no_misc_full.pkl"
 
 TRAIN_RATIO = 0.8
 
@@ -36,7 +37,14 @@ class SSJ500KReader(DatasetReader):
         return Instance(fields)
 
     def _read(self, kind) -> Iterator[Instance]:
-        fn = PICKLE_DUMP_TRAIN if kind == "train" else PICKLE_DUMP_TEST
+        if kind == "train":
+            fn = PICKLE_DUMP_TRAIN
+        elif kind == "test":
+            fn = PICKLE_DUMP_TEST
+        elif kind == "no_misc":
+            fn = PICKLE_DUMP_NO_MISC
+        else:
+            raise Exception(f"Uknown kind {kind}")
         with open(fn, "rb") as f:
             data = pickle.load(f)
             for words, lemmas, tags in data:
@@ -145,6 +153,47 @@ def load_convert_save_oversample():
         pickle.dump(data_test, f)
 
 
+def load_convert_save_no_misc():
+    tei_doc = "/home/jakob/PycharmProjects/nlp-ner/data/ssj500k-sl.TEI/ssj500k-sl.body.xml"
+    with open(tei_doc, 'r') as tei:
+        soup = BeautifulSoup(tei, 'lxml')
+
+    all_sentences = soup.findAll("s")
+    random.shuffle(all_sentences)
+
+    num_all = len(all_sentences)
+
+    del soup
+
+    data_train = []
+
+    for s in all_sentences:
+        sentence = []
+        labels = []
+        lemmas = []
+        words = s.findAll("w")
+        ned = {}
+        nel = s.findAll("seg")
+        for ne in nel:
+            for w in ne.findAll("w"):
+                subtype = ne.get("subtype")
+                if subtype == "deriv-per":
+                    subtype = "per"
+                ned[w.text] = subtype
+        for w in words:
+            word = w.text
+            lab = ned[word] if (word in ned and ned[word] != "misc") else "other"
+            sentence.append(word)
+            labels.append(lab)
+            lemmas.append(w.get("lemma"))
+        all_ne_types = set(ned.values())
+        if len(all_ne_types) > 1:
+            data_train.append((sentence, lemmas, labels))
+
+    with open(PICKLE_DUMP_NO_MISC, "wb+") as f:
+        pickle.dump(data_train, f)
+
+
 if __name__ == '__main__':
     random.seed(1337)
-    load_convert_save_oversample()
+    load_convert_save_no_misc()

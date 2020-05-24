@@ -7,14 +7,16 @@ from allennlp.data.token_indexers.elmo_indexer import ELMoTokenCharactersIndexer
 from allennlp.training.util import evaluate
 
 from ssj500kDS import SSJ500KReader
+from sentiCorefDs import SentiCorefReader
 from models import get_model, save_model_and_vocab
 
 torch.manual_seed(1)
 
 
+
 def train_model(parameters, name):
     token_indexer = {"tokens": ELMoTokenCharactersIndexer()} if parameters['use_elmo'] else None
-    reader = SSJ500KReader(token_indexer)
+    reader = SSJ500KReader(token_indexer) if parameters["dataset"] == "ssj500k" else SentiCorefReader(token_indexer)
     train_dataset = reader.read("train")
     validation_dataset = reader.read("test")
     vocab = Vocabulary.from_instances(train_dataset + validation_dataset)
@@ -52,12 +54,15 @@ if __name__ == '__main__':
                   "num_layers": 2,
                   "bidirectional": True,
                   "use_elmo": False,
-                  "use_lstm": False}
+                  "use_lstm": False,
+                  "dataset": "senti"}
+
     for bi in [True, False]:
         for lstm in [True, False]:
             for elmo in [True, False]:
                 parameters["bidirectional"] = bi
                 parameters["use_lstm"] = lstm
                 parameters["use_elmo"] = elmo
-                name = f"{'elmo' if elmo else 'embd'}_{'bi' if bi else 'uni'}_{'lstm' if lstm else 'gru'}"
+                parameters["dataset"] = "senti"
+                name = f"{parameters['dataset']}_{'elmo' if elmo else 'embd'}_{'bi' if bi else 'uni'}_{'lstm' if lstm else 'gru'}"
                 train_model(parameters, name)

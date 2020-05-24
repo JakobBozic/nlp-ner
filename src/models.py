@@ -20,14 +20,16 @@ class NerModel(Model):
     def __init__(self,
                  word_embeddings: TextFieldEmbedder,
                  encoder: Seq2SeqEncoder,
-                 vocab: Vocabulary) -> None:
+                 vocab: Vocabulary,
+                 num_categories: int) -> None:
         super().__init__(vocab)
         self.word_embeddings = word_embeddings
         self.encoder = encoder
         self.hidden2tag = torch.nn.Linear(in_features=encoder.get_output_dim(),
                                           out_features=vocab.get_vocab_size('labels'))
         self.accuracy = CategoricalAccuracy()
-        self.fms = [F1Measure(i) for i in range(1, 5)]
+        self.num_categories = num_categories
+        self.fms = [F1Measure(i) for i in range(1, self.num_categories + 1)]
 
     def forward(self,
                 sentence: Dict[str, torch.Tensor],
@@ -50,11 +52,11 @@ class NerModel(Model):
                "avg_f1": 0}
         for i, fm in enumerate(self.fms):
             p, r, f = fm.get_metric(reset)
-            dct[f"p{i}"] = p
-            dct[f"r{i}"] = r
-            dct[f"f{i}"] = f
+            dct[f"p{i + 1}"] = p
+            dct[f"r{i + 1}"] = r
+            dct[f"f{i + 1}"] = f
             dct["avg_f1"] = dct['avg_f1'] + f
-        dct["avg_f1"] = dct["avg_f1"] / 4
+        dct["avg_f1"] = dct["avg_f1"] / (self.num_categories)
         return dct
 
 
@@ -84,7 +86,7 @@ def get_model(vocab, params):
     else:
         encoder = PytorchSeq2SeqWrapper(torch.nn.GRU(emb_d, hidden_d, num_layers=n_layers, batch_first=True, bidirectional=bidirectional))
 
-    model = NerModel(word_embedder, encoder, vocab)
+    model = NerModel(word_embedder, encoder, vocab, num_categories=(3 if params["dataset"] == "senti" else 4))
     return model
 
 
@@ -112,6 +114,8 @@ def load_model_and_vocab(fname):
 
     vocab = Vocabulary.from_files(VOCAB_PATH)
     params = parse_params(PARAMS_PATH)
+    if "dataset" not in params:
+        params["dataset"] = "ssj500k"
     model = get_model(vocab, params)
 
     if torch.cuda.is_available():
@@ -124,7 +128,7 @@ def load_model_and_vocab(fname):
 
     if cuda_device > -1:
         model.cuda(cuda_device)
-    return model, params
+    return model, params, vocab
 
 
 def parse_params(p_fname):
